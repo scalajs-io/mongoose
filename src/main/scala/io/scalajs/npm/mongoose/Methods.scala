@@ -1,0 +1,14 @@
+package io.scalajs.npm.mongoose
+
+import scala.scalajs.js
+
+/**
+  * Methods
+  * @author lawrence.daniels@gmail.com
+  */
+@js.native
+class Methods extends js.Object {
+
+  var findSimilarTypes: js.Function1[js.Any, Model] = js.native
+
+}

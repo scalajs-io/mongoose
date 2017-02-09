@@ -1,0 +1,9 @@
+{
+  "name": "mongoose-scalajs",
+  "version": "4.8.1",
+  "private": true,
+  "dependencies": {
+    "mongoose": "^4.8.1",
+    "source-map": "^0.5.6"
+  }
+}
