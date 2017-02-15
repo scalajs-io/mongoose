@@ -1,6 +1,8 @@
 Mongoose API for Scala.js
 ================================
-This is a Scala.js type-safe binding for [mongoose](https://www.npmjs.com/package/mongoose)
+[mongoose](https://www.npmjs.com/package/mongoose) - Mongoose MongoDB ODM.
+
+### Description
 
 Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
 
