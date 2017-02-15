@@ -4,18 +4,20 @@ This is a Scala.js type-safe binding for [mongoose](https://www.npmjs.com/packag
 
 Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
 
-#### Build Dependencies
+**NOTE**: This is a work-in-progress binding. It requires further development and is not yet functional.
 
-* [ScalaJs.io v0.3.x](https://github.com/ldaniels528/scalajs.io)
+### Build Dependencies
+
+* [ScalaJs.io v0.3.x](https://github.com/scalajs-io/scalajs.io)
 * [SBT v0.13.13](http://www.scala-sbt.org/download.html)
 
-#### Build/publish the SDK locally
+### Build/publish the SDK locally
 
 ```bash
  $ sbt clean publish-local
 ```
 
-#### Running the tests
+### Running the tests
 
 Before running the tests the first time, you must ensure the npm packages are installed:
 
@@ -29,7 +31,7 @@ Then you can run the tests:
 $ sbt test
 ```
 
-#### Examples
+### Examples
 
 ```scala
 import io.scalajs.nodejs._
@@ -55,7 +57,7 @@ val blog = Mongoose.model("Blog", blogSchema)
 console.log("blog => ", blog)
 ```
 
-#### Artifacts and Resolvers
+### Artifacts and Resolvers
 
 To add the `Mongoose` binding to your project, add the following to your build.sbt:  
 
