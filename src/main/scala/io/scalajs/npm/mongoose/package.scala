@@ -10,17 +10,6 @@ import scala.scalajs.js
   */
 package object mongoose {
 
-  def field(`type`: SchemaFieldType,
-            default: js.Any = js.undefined,
-            c: js.UndefOr[Boolean] = js.undefined,
-            `match`: js.UndefOr[js.RegExp] = js.undefined,
-            min: js.UndefOr[Int] = js.undefined,
-            index: js.UndefOr[Boolean] = js.undefined): SchemaField = {
-    new SchemaField(`type` = `type`, default = default, c = c, `match` = `match`, min = min, index = index)
-  }
-
-  def model[T](name: String, schema: Schema): T = null
-
   implicit class SchemaEnrichment(val schema: Schema) extends AnyVal {
 
     @inline

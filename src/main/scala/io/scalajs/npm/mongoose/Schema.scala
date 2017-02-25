@@ -22,21 +22,10 @@ class Schema(structure: js.Any) extends js.Object {
   * Schema Singleton
   * @author lawrence.daniels@gmail.com
   */
-@js.native
-@JSImport("mongoose", "Schema")
-object Schema extends js.Object {
+object Schema {
 
-  @js.native
-  @JSImport("mongoose", "Schema.Types")
-  object Types extends js.Object {
-    type String = java.lang.String
-    type Number = scala.Double
-    type Date = js.Date
-    type Buffer = io.scalajs.nodejs.buffer.Buffer
-    type Boolean = scala.Boolean
-    type Mixed = js.Any
-    type ObjectId = io.scalajs.npm.mongodb.ObjectID
-    type Array[A] = js.Array[A]
+  def apply(fields: (String, js.Any)*): Schema = {
+    new Schema(js.Dictionary(fields: _*))
   }
 
 }
