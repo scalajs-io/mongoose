@@ -6,15 +6,26 @@ import scala.scalajs.js.annotation.JSImport
 /**
   * Everything in Mongoose starts with a Schema. Each schema maps to a MongoDB collection and defines
   * the shape of the documents within that collection.
-  * @version 4.7.6
-  * @see http://mongoosejs.com/
+  * @see http://mongoosejs.com/docs/api.html
   * @author lawrence.daniels@gmail.com
   */
 @js.native
 @JSImport("mongoose", "Schema")
 class Schema(structure: js.Any) extends js.Object {
 
+  def get(field: String): js.Any = js.native
+
   def methods: Methods = js.native
+
+  def path(label: String): SchemaProperty = js.native
+
+  /**
+    * Defines a middleware function.
+    * @param method the defined method
+    * @param value  the given method value callback
+    * @example schema.pre('set', function (next, path, val, typel) { ... })
+    */
+  def pre[A](method: String, value: js.Function4[js.Function0[Any], String, js.Any, js.Any, Any]): Unit = js.native
 
 }
 
@@ -24,8 +35,12 @@ class Schema(structure: js.Any) extends js.Object {
   */
 object Schema {
 
-  def apply(fields: (String, js.Any)*): Schema = {
-    new Schema(js.Dictionary(fields: _*))
-  }
+  /**
+    * Creates a new schema
+    * @param fields the schema fields
+    * @return a new schema
+    */
+  @inline
+  def apply(fields: (String, js.Any)*): Schema = new Schema(js.Dictionary(fields: _*))
 
 }

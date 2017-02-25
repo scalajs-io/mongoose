@@ -1,8 +1,9 @@
 package io.scalajs.npm
 
-import io.scalajs.util.ScalaJsHelper._
+import io.scalajs.nodejs.buffer.Buffer
 
 import scala.scalajs.js
+import scala.scalajs.js.|
 
 /**
   * mongoose package object
@@ -10,14 +11,23 @@ import scala.scalajs.js
   */
 package object mongoose {
 
-  implicit class SchemaEnrichment(val schema: Schema) extends AnyVal {
+  ///////////////////////////////////////////////////////////////////
+  //    Type Definitions
+  ///////////////////////////////////////////////////////////////////
 
-    @inline
-    def path(label: String): SchemaProperty = schema.dynamic.path(label).asInstanceOf[SchemaProperty]
+  /**
+    * Schema Field Types
+    */
+  @js.native
+  trait SchemaFieldType[+T] extends js.Object
 
-    @inline
-    def pre[A](label: String, value: js.Function1[js.Function0[Any], Any]): SchemaProperty = schema.dynamic.pre(label).asInstanceOf[SchemaProperty]
-
-  }
+  type ArrayFieldType = SchemaFieldType[js.Array[_]]
+  type BooleanFieldType = SchemaFieldType[Boolean]
+  type BufferFieldType = SchemaFieldType[Buffer]
+  type DateFieldType = SchemaFieldType[js.Date | Double]
+  type MixedFieldType = SchemaFieldType[js.Any]
+  type NumberFieldType = SchemaFieldType[Double | Int]
+  type ObjectIdFieldType = SchemaFieldType[ObjectId]
+  type StringFieldType = SchemaFieldType[String]
 
 }

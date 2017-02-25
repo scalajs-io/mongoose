@@ -1,6 +1,5 @@
 package io.scalajs.npm.mongoose
 
-import io.scalajs.nodejs.util.Util
 import org.scalatest.FunSpec
 
 import scala.scalajs.js
@@ -31,7 +30,7 @@ class SchemaTest extends FunSpec {
         ))
 
       val blog = Mongoose.model("Blog", blogSchema)
-      info(s"blog => ${Util.inspect(blog)}")
+      info(s"blog => $blog")
     }
 
 
@@ -47,17 +46,9 @@ class SchemaTest extends FunSpec {
       )
 
       val comment = Mongoose.model("Comment", commentSchema)
-      info(s"comment => ${Util.inspect(comment)}")
+      info(s"comment => $comment")
     }
 
   }
-
-}
-
-/**
-  * Schema Test Companion
-  * @author lawrence.daniels@gmail.com
-  */
-object SchemaTest {
 
 }
