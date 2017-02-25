@@ -36,27 +36,51 @@ $ sbt test
 ### Examples
 
 ```scala
+import io.scalajs.JSON
 import io.scalajs.nodejs._
 import io.scalajs.npm.mongoose._
+import io.scalajs.npm.mongoose.Mongoose.Schema.Types._
 import scalajs.js
 
-val blogSchema = new Schema(
-    js.Dictionary(
-      "title" -> "String",
-      "author" -> "String",
-      "body" -> "String",
-      "comments" -> js.Array(js.Dictionary("body" -> "String", "date" -> "Date")),
-      "date" -> js.Dictionary("type" -> "Date", "default" -> js.Date.now),
-      "hidden" -> "Boolean",
-      "meta" -> js.Dictionary(
-        "votes" -> "Number",
-        "favs" -> "Number"
-      ))
+val CommentSchema = Schema(
+    "name" -> SchemaField(`type` = String, default = "John Doe"),
+    "age" -> SchemaField(`type` = Number, min = 18, c = true),
+    "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
+    "date" -> SchemaField(`type` = Date, default = js.Date.now),
+    "buff" -> Buffer
 )
 
-val blog = Mongoose.model("Blog", blogSchema)
+// define a mutator
+CommentSchema.path("name").set[String](_.toUpperCase)
 
-console.log("blog => ", blog)
+// define a middleware function
+CommentSchema.pre("save", { (next, _, _, _) =>
+    console.log(CommentSchema.get("name"))
+    next()
+})
+
+// register the model
+val CommentModel = Mongoose.model("Comment", CommentSchema)
+
+// create an instance of the model
+val comment = CommentModel.create[Comment]()
+comment.age = 21
+comment.bio = "Lover of life"
+comment.date = js.Date.now()
+
+// persist the data object
+comment.save { err =>
+  console.error(JSON.stringify(err))
+}
+
+@js.native
+trait Comment extends js.Object {
+    var name: String = js.native
+    var age: js.UndefOr[Int] = js.native
+    var bio: js.UndefOr[String] = js.native
+    var date: js.UndefOr[Double] = js.native
+    var buff: js.UndefOr[buffer.Buffer] = js.native
+}
 ```
 
 ### Artifacts and Resolvers
