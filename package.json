@@ -3,7 +3,9 @@
   "version": "4.8.1",
   "private": true,
   "dependencies": {
+    "bluebird": "^3.4.7",
     "mongoose": "^4.8.1",
+    "mpromise": "^0.5.5",
     "source-map": "^0.5.6"
   }
 }

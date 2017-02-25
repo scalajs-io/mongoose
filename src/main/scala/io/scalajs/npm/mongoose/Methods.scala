@@ -9,6 +9,6 @@ import scala.scalajs.js
 @js.native
 class Methods extends js.Object {
 
-  var findSimilarTypes: js.Function1[js.Any, Model] = js.native
+  var findSimilarTypes: js.Function1[js.Any, Model[_]] = js.native
 
 }

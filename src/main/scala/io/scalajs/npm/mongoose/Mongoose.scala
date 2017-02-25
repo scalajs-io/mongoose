@@ -2,7 +2,7 @@ package io.scalajs.npm.mongoose
 
 import io.scalajs.RawOptions
 import io.scalajs.nodejs.SystemError
-import io.scalajs.npm.mongodb.{ConnectionOptions, Db}
+import io.scalajs.npm.mongodb.{ConnectionOptions, MongoDB}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSImport
@@ -15,9 +15,47 @@ import scala.scalajs.js.|
   * @author lawrence.daniels@gmail.com
   */
 @js.native
-trait Mongoose extends js.Object {
+@JSImport("mongoose", "Mongoose")
+class Mongoose extends js.Object
 
-  def createConnection(url: String, options: ConnectionOptions | RawOptions = js.native): Db = js.native
+/**
+  * Mongoose Singleton
+  * @author lawrence.daniels@gmail.com
+  */
+@js.native
+@JSImport("mongoose", JSImport.Namespace)
+object Mongoose extends js.Object {
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //    Properties
+  ///////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+    * This is the connection used by default for every model created using mongoose.model.
+    */
+  def connection: Connection = js.native
+
+  /**
+    * The MongoDB instance
+    */
+  def mongo: MongoDB = js.native
+
+  /**
+    * The promises library in use by Mongoose
+    */
+  var Promise: js.Any = js.native
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //    Methods
+  ///////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+    *
+    * @param url
+    * @param options
+    * @return
+    */
+  def createConnection(url: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
 
   /**
     * Opens the default mongoose connection.
@@ -27,25 +65,59 @@ trait Mongoose extends js.Object {
     */
   def connect(url: String,
               options: ConnectionOptions | RawOptions = js.native,
-              callback: js.Function2[SystemError, Connection, Any] = js.native): js.Promise[Connection] = js.native
+              callback: js.Function2[SystemError, Connection, Any] = js.native): Connection = js.native
+
+
+  /**
+    * Disconnects all connections.
+    */
+  def disconnect(): MongooseThenable[Unit] = js.native
 
   /**
     * Disconnects all connections.
     * @param callback the call back
     */
-  def disconnect(callback: js.Function = js.native): js.Promise[js.Any] = js.native
+  def disconnect(callback: js.Function1[Error, Any]): Unit = js.native
 
-  def model(name: String, schema: Schema = js.native): Model = js.native
+  /**
+    * Gets mongoose options
+    * @param key the given key
+    * @return the associated value
+    */
+  def get[T](key: String): js.UndefOr[T] = js.native
 
-}
+  /**
+    *
+    * @param name           the name of the model
+    * @param schema         the [[Schema]]
+    * @param collectionName the collection name
+    * @return the [[Model]]
+    */
+  def model[A](name: String, schema: Schema = js.native, collectionName: String = js.native): Model[A] = js.native
 
-/**
-  * Mongoose Singleton
-  * @author lawrence.daniels@gmail.com
-  */
-@js.native
-@JSImport("mongoose", JSImport.Namespace)
-object Mongoose extends Mongoose {
+  /**
+    * Returns an array of model names created on this instance of Mongoose.
+    * @return an array of model names
+    */
+  def modelNames(): js.Array[String] = js.native
+
+  /**
+    * Declares a global plugin executed on all Schemas.
+    * @param callback the  plugin callback
+    * @param options  the optional options
+    */
+  def plugin(callback: js.Function, options: RawOptions = js.native): Unit = js.native
+
+  /**
+    * Sets mongoose options
+    * @param key   the options key
+    * @param value the the value to set or function
+    */
+  def set(key: String, value: js.Any): Unit = js.native
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //    Schema.Types package
+  ///////////////////////////////////////////////////////////////////////////////////////
 
   @js.native
   object Schema extends js.Object {
@@ -70,7 +142,6 @@ object Mongoose extends Mongoose {
       def String: StringFieldType = js.native
 
     }
-
   }
 
 }

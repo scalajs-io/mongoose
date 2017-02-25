@@ -57,3 +57,9 @@ object SchemaField {
   }
 
 }
+
+/**
+  * Represents a schema field type
+  */
+@js.native
+trait SchemaFieldType[+T] extends js.Object

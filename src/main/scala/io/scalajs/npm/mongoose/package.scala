@@ -15,12 +15,6 @@ package object mongoose {
   //    Type Definitions
   ///////////////////////////////////////////////////////////////////
 
-  /**
-    * Schema Field Types
-    */
-  @js.native
-  trait SchemaFieldType[+T] extends js.Object
-
   type ArrayFieldType = SchemaFieldType[js.Array[_]]
   type BooleanFieldType = SchemaFieldType[Boolean]
   type BufferFieldType = SchemaFieldType[Buffer]

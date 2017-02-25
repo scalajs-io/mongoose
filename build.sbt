@@ -27,7 +27,8 @@ lazy val root = (project in file(".")).
 	    "org.scala-lang" % "scala-reflect" % scalaJsVersion,
 	    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 	    "io.scalajs" %%% "nodejs" % scalaJsIOVersion,
-      "io.scalajs.npm" %%% "mongodb" % "2.2.22-2"
+      "io.scalajs.npm" %%% "mongodb" % "2.2.22-2",
+      "io.scalajs.npm" %%% "mpromise" % "0.5.5"
   ))
 
 /////////////////////////////////////////////////////////////////////////////////
