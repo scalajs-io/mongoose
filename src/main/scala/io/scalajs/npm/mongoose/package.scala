@@ -1,14 +1,14 @@
 package io.scalajs.npm
 
 import io.scalajs.RawOptions
-import io.scalajs.nodejs.SystemError
 import io.scalajs.nodejs.buffer.Buffer
-import io.scalajs.npm.mongodb.ConnectionOptions
+import io.scalajs.npm.mongodb.{ConnectionOptions, MongoError}
 import io.scalajs.npm.mongoose.MongooseModel.CRUD
 import io.scalajs.util.PromiseHelper._
 
 import scala.concurrent.Promise
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSName
 import scala.scalajs.js.|
 
 /**
@@ -20,6 +20,8 @@ package object mongoose {
   ///////////////////////////////////////////////////////////////////
   //    Type Definitions
   ///////////////////////////////////////////////////////////////////
+
+  type MongooseError = MongoError
 
   type Model[A] = A with CRUD[A]
 
@@ -33,6 +35,14 @@ package object mongoose {
   type StringFieldType = SchemaFieldType[String]
 
   ///////////////////////////////////////////////////////////////////
+  //    Objects
+  ///////////////////////////////////////////////////////////////////
+
+  @js.native
+  @JSName("exports")
+  object exports extends Exports
+
+  ///////////////////////////////////////////////////////////////////
   //    Implicit Definitions
   ///////////////////////////////////////////////////////////////////
 
@@ -44,7 +54,7 @@ package object mongoose {
 
     @inline
     def connectAsync(url: String, options: ConnectionOptions | RawOptions = null): Promise[Connection] = {
-      promiseWithError1[SystemError, Connection](connectable.connect(url, options, _))
+      promiseWithError1[MongooseError, Connection](connectable.connect(url, options, _))
     }
 
   }

@@ -50,7 +50,7 @@ Mongoose.Promise = js.Dynamic.global.global.Promise
 // define the schema
 val commentSchema = {
     import Mongoose.Schema.Types._
-    Schema(
+    Schema[CommentLike](
         "name" -> SchemaField(`type` = String, default = "John Doe"),
         "age" -> SchemaField(`type` = Number, min = 18, c = true),
         "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
@@ -60,7 +60,7 @@ val commentSchema = {
 }
 
 // register the model
-val Comments = Mongoose.model[CommentLike]("Comment", commentSchema)
+val Comments = Mongoose.model("Comment", commentSchema)
 
 // create an instance of the model
 val comment = Comments()

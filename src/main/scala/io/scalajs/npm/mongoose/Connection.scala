@@ -2,6 +2,7 @@ package io.scalajs.npm.mongoose
 
 import io.scalajs.RawOptions
 import io.scalajs.nodejs.events.IEventEmitter
+import io.scalajs.npm.mongodb.Db
 
 import scala.scalajs.js
 
@@ -12,12 +13,59 @@ import scala.scalajs.js
 @js.native
 trait Connection extends IEventEmitter {
 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //    Properties
+  ///////////////////////////////////////////////////////////////////////////////////////
+
   /**
-    * Gets mongoose options
-    * @param key the given key
-    * @return the associated value
+    * A hash of the collections associated with this connection
     */
-  def get(key: String): js.Any = js.native
+  def collections: js.Dictionary[Collection] = js.native
+
+  /**
+    * A hash of the global options that are associated with this connection
+    */
+  def config: js.Dictionary[js.Any] = js.native
+
+  /**
+    * The mongodb.Db instance, set when the connection is opened
+    */
+  def db: Db = js.native
+
+  /**
+    * Connection ready state
+    * <ul>
+    * <li>0 = disconnected</li>
+    * <li>1 = connected</li>
+    * <li>2 = connecting</li>
+    * <li>3 = disconnecting</li>
+    * </ul>
+    * Each state change emits its associated event name.
+    * @return
+    */
+  def readyState: Int = js.native
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //    Methods
+  ///////////////////////////////////////////////////////////////////////////////////////
+
+  /**
+    * Closes the connection
+    */
+  def close(): js.Promise[js.Any] = js.native
+
+  /**
+    * Closes the connection
+    */
+  def close(callback: js.Function1[MongooseError, Any]): Unit = js.native
+
+  /**
+    * Retrieves a collection, creating it if not cached.
+    * @param name    of the collection
+    * @param options optional collection options
+    * @return the [[Collection collection]] instance
+    */
+  def collection(name: String, options: RawOptions = js.native)
 
   /**
     * Models defined on the mongoose instance are available to all connection created by the same mongoose instance.
@@ -25,10 +73,10 @@ trait Connection extends IEventEmitter {
     * @param schema     the schema
     * @param collection the name (optional, inferred from model name)
     * @param skipInit   indicates whether to skip initialization (defaults to false)
-    * @return the model
+    * @return the [[MongooseModel model]]
     */
   def model[A](name: String,
-               schema: Schema = js.native,
+               schema: Schema[A] = js.native,
                collection: String = js.native,
                skipInit: Boolean = js.native): MongooseModel[A] = js.native
 
@@ -37,15 +85,6 @@ trait Connection extends IEventEmitter {
     * @return an array of model names
     */
   def modelNames(): js.Array[String] = js.native
-
-  /**
-    *
-    * @param host
-    * @param database
-    * @param port
-    * @param options
-    */
-  def open(host: String, database: String, port: Int, options: RawOptions = js.native): Unit = js.native
 
   /**
     * Declares a global plugin executed on all Schemas.

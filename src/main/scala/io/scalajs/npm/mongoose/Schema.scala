@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.JSImport
   */
 @js.native
 @JSImport("mongoose", "Schema")
-class Schema(structure: js.Any) extends js.Object {
+class Schema[T](structure: js.Any) extends js.Object {
 
   def get(field: String): js.Any = js.native
 
@@ -41,6 +41,6 @@ object Schema {
     * @return a new schema
     */
   @inline
-  def apply(fields: (String, js.Any)*): Schema = new Schema(js.Dictionary(fields: _*))
+  def apply[T](fields: (String, js.Any)*): Schema[T] = new Schema[T](js.Dictionary(fields: _*))
 
 }

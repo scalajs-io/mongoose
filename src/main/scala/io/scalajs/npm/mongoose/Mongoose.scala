@@ -1,7 +1,6 @@
 package io.scalajs.npm.mongoose
 
 import io.scalajs.RawOptions
-import io.scalajs.nodejs.SystemError
 import io.scalajs.npm.mongodb.{ConnectionOptions, MongoDB}
 
 import scala.scalajs.js
@@ -77,13 +76,13 @@ object Mongoose extends Connectable {
 
   /**
     *
-    * @param name           the name of the model
+    * @param modelName      the name of the model
     * @param schema         the [[Schema]]
     * @param collectionName the collection name
     * @return the [[MongooseModel model]]
     */
-  def model[A](name: String,
-               schema: Schema = js.native,
+  def model[A](modelName: String,
+               schema: Schema[A] = js.native,
                collectionName: String = js.native): MongooseModel[A] = js.native
 
   /**
@@ -91,6 +90,15 @@ object Mongoose extends Connectable {
     * @return an array of model names
     */
   def modelNames(): js.Array[String] = js.native
+
+  /**
+    *
+    * @param host
+    * @param database
+    * @param port
+    * @param options
+    */
+  def open(host: String, database: String, port: Int, options: RawOptions = js.native): Unit = js.native
 
   /**
     * Declares a global plugin executed on all Schemas.
@@ -133,6 +141,7 @@ object Mongoose extends Connectable {
       def String: StringFieldType = js.native
 
     }
+
   }
 
 }
@@ -145,8 +154,8 @@ trait Connectable extends js.Object {
 
   /**
     * Opens the default mongoose connection.
-    * @param url      the connecion URL
-    * @param options  the connection options
+    * @param url     the connecion URL
+    * @param options the connection options
     * @return the connection
     */
   def connect(url: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
@@ -159,13 +168,13 @@ trait Connectable extends js.Object {
     */
   def connect(url: String,
               options: ConnectionOptions | RawOptions,
-              callback: js.Function2[SystemError, Connection, Any]): Unit = js.native
+              callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
 
   /**
     * Opens the default mongoose connection.
     * @param url      the connecion URL
     * @param callback the callback
     */
-  def connect(url: String, callback: js.Function2[SystemError, Connection, Any]): Unit = js.native
+  def connect(url: String, callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
 
 }
