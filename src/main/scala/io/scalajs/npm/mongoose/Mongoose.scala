@@ -24,7 +24,7 @@ class Mongoose extends js.Object
   */
 @js.native
 @JSImport("mongoose", JSImport.Namespace)
-object Mongoose extends js.Object {
+object Mongoose extends Connectable {
 
   ///////////////////////////////////////////////////////////////////////////////////////
   //    Properties
@@ -58,17 +58,6 @@ object Mongoose extends js.Object {
   def createConnection(url: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
 
   /**
-    * Opens the default mongoose connection.
-    * @param url      the connecion URL
-    * @param options  the connection options
-    * @param callback the callback
-    */
-  def connect(url: String,
-              options: ConnectionOptions | RawOptions = js.native,
-              callback: js.Function2[SystemError, Connection, Any] = js.native): Connection = js.native
-
-
-  /**
     * Disconnects all connections.
     */
   def disconnect(): MongooseThenable[Unit] = js.native
@@ -91,9 +80,11 @@ object Mongoose extends js.Object {
     * @param name           the name of the model
     * @param schema         the [[Schema]]
     * @param collectionName the collection name
-    * @return the [[Model]]
+    * @return the [[MongooseModel model]]
     */
-  def model[A](name: String, schema: Schema = js.native, collectionName: String = js.native): Model[A] = js.native
+  def model[A](name: String,
+               schema: Schema = js.native,
+               collectionName: String = js.native): MongooseModel[A] = js.native
 
   /**
     * Returns an array of model names created on this instance of Mongoose.
@@ -143,5 +134,38 @@ object Mongoose extends js.Object {
 
     }
   }
+
+}
+
+/**
+  * Mongoose Connectable Object
+  */
+@js.native
+trait Connectable extends js.Object {
+
+  /**
+    * Opens the default mongoose connection.
+    * @param url      the connecion URL
+    * @param options  the connection options
+    * @return the connection
+    */
+  def connect(url: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
+
+  /**
+    * Opens the default mongoose connection.
+    * @param url      the connecion URL
+    * @param options  the connection options
+    * @param callback the callback
+    */
+  def connect(url: String,
+              options: ConnectionOptions | RawOptions,
+              callback: js.Function2[SystemError, Connection, Any]): Unit = js.native
+
+  /**
+    * Opens the default mongoose connection.
+    * @param url      the connecion URL
+    * @param callback the callback
+    */
+  def connect(url: String, callback: js.Function2[SystemError, Connection, Any]): Unit = js.native
 
 }

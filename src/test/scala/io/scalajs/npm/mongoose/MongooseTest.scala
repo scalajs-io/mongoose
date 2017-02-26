@@ -1,12 +1,14 @@
 package io.scalajs.npm.mongoose
 
 import io.scalajs.JSON
-import io.scalajs.nodejs.buffer
+import io.scalajs.nodejs.{Assert, buffer}
 import io.scalajs.npm.mongodb.doc
-import io.scalajs.npm.mongoose.MongooseTest.Comment
+import io.scalajs.npm.mongoose.MongooseTest.CommentLike
 import org.scalatest.FunSpec
 
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js
+import scala.util.{Failure, Success}
 
 /**
   * Mongoose Tests
@@ -16,55 +18,69 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
 
   describe("Mongoose") {
 
-    it("should support middleware functions") {
+    Mongoose.Promise = js.Dynamic.global.global.Promise
+
+    // define the schema
+    val commentSchema = {
       import Mongoose.Schema.Types._
-
-      withMongoURL { url =>
-        info("Connecting to MongoDB...")
-        val conn = Mongoose.connect(url)
-
-        Mongoose.Promise = js.Dynamic.global.global.Promise
-        //Mongoose.Promise = io.scalajs.nodejs.Module.module.require("bluebird")
-
-        info("Define the schema")
-        val commentSchema = Schema(
-          "name" -> SchemaField(`type` = String, default = "John Doe"),
-          "age" -> SchemaField(`type` = Number, min = 18, c = true),
-          "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
-          "date" -> SchemaField(`type` = Date, default = js.Date.now),
-          "buff" -> Buffer
-        )
-
-        info("Define a mutator")
-        commentSchema.path("name").set[String](_.toUpperCase)
-
-        info("Define a middleware function")
-        commentSchema.pre("save", { (next, _, _, _) =>
-          info(commentSchema.get("name").toString)
-          next()
-        })
-
-        info("Register the model")
-        val commentModel = Mongoose.model[Comment]("Comment", commentSchema)
-
-        info("Create an instance of the model")
-        val comment = commentModel.create()
-        comment.age = 21
-        comment.bio = "Lover of life"
-        comment.date = js.Date.now()
-
-        info(s"model instance: ${JSON.stringify(comment)}")
-
-        info("Persist the data object")
-        comment.save()
-
-        info("Retrieve a model by ID")
-        commentModel.find(doc("_id" -> comment.id)).exec().`then`({ comments =>
-          info(s"comments: ${JSON.stringify(comments)}")
-        })
-      }
+      Schema(
+        "name" -> SchemaField(`type` = String, default = "John Doe"),
+        "age" -> SchemaField(`type` = Number, min = 18, c = true),
+        "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
+        "date" -> SchemaField(`type` = Date, default = js.Date.now),
+        "buff" -> Buffer
+      )
     }
 
+    // define the model
+    val Comments = Mongoose.model[CommentLike]("Comment", commentSchema)
+
+    it("should support CRUD operations") {
+
+      val comment = Comments()
+      comment.name = "John Doe"
+      comment.age = 21
+      comment.bio = "Lover of life"
+      comment.date = js.Date.now()
+
+      // connect to MongoDB, and perform CRUD on the comment
+      withMongoURL { url =>
+        info(s"Connecting to '$url'...")
+        val outcome = for {
+          _ <- Mongoose.connectAsync(url).future
+
+          // make sure there are no pre-existing comments
+          deletes <- Comments.remove(doc()).toFuture
+          _ = info(s"deletes: ${JSON.stringify(deletes)}")
+
+          // save the comment
+          saved <- comment.save().toFuture
+          _ = info(s"saved comment: ${JSON.stringify(saved)}")
+
+          // retrieve the comment(s)
+          comments <- Comments.find(doc()).exec().toFuture
+          _ = info(s"comments: ${JSON.stringify(comments)}")
+
+          // update the comment
+          result <- {
+            saved.name = "John Travola"
+            saved.age = 63
+            saved.update().toFuture
+          }
+          _ = info(s"updated comment: ${JSON.stringify(saved)}")
+          _ = Assert.ok(result.nModified == 1 && result.isOk, JSON.stringify(result))
+
+          // delete the comment
+          deleted <- saved.remove().toFuture
+          _ = info(s"deleted comment: ${JSON.stringify(deleted)}")
+        } yield comments
+
+        outcome onComplete {
+          case Failure(e) => alert(e.getMessage)
+          case Success(_) =>
+        }
+      }
+    }
   }
 
 }
@@ -76,8 +92,8 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
 object MongooseTest {
 
   @js.native
-  trait Comment extends js.Object {
-    var id: String = js.native
+  trait CommentLike extends js.Object {
+    var _id: js.UndefOr[ObjectId] = js.native
     var name: String = js.native
     var age: js.UndefOr[Int] = js.native
     var bio: js.UndefOr[String] = js.native

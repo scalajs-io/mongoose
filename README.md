@@ -6,7 +6,7 @@ Mongoose API for Scala.js
 
 Mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment.
 
-**NOTE**: This is a work-in-progress binding. It requires further development and is not yet functional.
+**NOTE**: This is a work-in-progress binding. 
 
 ### Build Dependencies
 
@@ -38,43 +38,68 @@ $ sbt test
 ```scala
 import io.scalajs.JSON
 import io.scalajs.nodejs._
+import io.scalajs.npm.mongodb.doc
 import io.scalajs.npm.mongoose._
-import io.scalajs.npm.mongoose.Mongoose.Schema.Types._
+
+import scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalajs.js
 
-val CommentSchema = Schema(
-    "name" -> SchemaField(`type` = String, default = "John Doe"),
-    "age" -> SchemaField(`type` = Number, min = 18, c = true),
-    "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
-    "date" -> SchemaField(`type` = Date, default = js.Date.now),
-    "buff" -> Buffer
-)
-
-// define a mutator
-CommentSchema.path("name").set[String](_.toUpperCase)
-
-// define a middleware function
-CommentSchema.pre("save", { (next, _, _, _) =>
-    console.log(CommentSchema.get("name"))
-    next()
-})
+// define the schema
+val commentSchema = {
+    import Mongoose.Schema.Types._
+    Schema(
+        "name" -> SchemaField(`type` = String, default = "John Doe"),
+        "age" -> SchemaField(`type` = Number, min = 18, c = true),
+        "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
+        "date" -> SchemaField(`type` = Date, default = js.Date.now),
+        "buff" -> Buffer
+    )
+}
 
 // register the model
-val CommentModel = Mongoose.model("Comment", CommentSchema)
+val Comments = Mongoose.model[CommentLike]("Comment", commentSchema)
 
 // create an instance of the model
-val comment = CommentModel.create[Comment]()
+val comment = Comments()
+comment.name = "John Doe"
 comment.age = 21
 comment.bio = "Lover of life"
 comment.date = js.Date.now()
 
-// persist the data object
-comment.save { err =>
-  console.error(JSON.stringify(err))
+for {
+    // connect to the database
+    _ <- Mongoose.connectAsync("mongodb://localhost:27017/test").future
+    
+    // make sure there are no pre-existing comments
+    deletes <- Comments.remove(doc()).toFuture
+    _ = println(s"deletes: ${JSON.stringify(deletes)}")
+    
+    // save the comment
+    saved <- comment.save().toFuture
+    _ = println(s"saved comment: ${JSON.stringify(saved)}")
+    
+    // retrieve the comment(s)
+    comments <- Comments.find(doc()).exec().toFuture
+    _ = println(s"comments: ${JSON.stringify(comments)}")
+    
+    // update the comment
+    result <- {
+        saved.name = "John Travola"
+        saved.age = 63
+        saved.update().toFuture
+    }
+    _ = println(s"updated comment: ${JSON.stringify(saved)}")
+    _ = Assert.ok(result.nModified == 1 && result.isOk, JSON.stringify(result))
+    
+    // delete the comment
+    deleted <- saved.remove().toFuture
+    _ = println(s"deleted comment: ${JSON.stringify(deleted)}")
+} {
+  println("Done.")
 }
 
 @js.native
-trait Comment extends js.Object {
+trait CommentLike extends js.Object {
     var name: String = js.native
     var age: js.UndefOr[Int] = js.native
     var bio: js.UndefOr[String] = js.native

@@ -11,6 +11,6 @@ import scala.scalajs.js.annotation.JSImport
 @JSImport("mongoose", "Query")
 class Query[T]() extends js.Object {
 
-  def exec(): MongooseThenable[T] = js.native
+  def exec(): js.Promise[T] = js.native
 
 }

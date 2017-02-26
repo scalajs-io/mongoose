@@ -30,7 +30,7 @@ trait Connection extends IEventEmitter {
   def model[A](name: String,
                schema: Schema = js.native,
                collection: String = js.native,
-               skipInit: Boolean = js.native): Model[A] = js.native
+               skipInit: Boolean = js.native): MongooseModel[A] = js.native
 
   /**
     * Returns an array of model names created on this instance of Mongoose.
