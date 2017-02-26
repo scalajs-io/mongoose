@@ -18,6 +18,7 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
 
   describe("Mongoose") {
 
+    // set the promise type
     Mongoose.Promise = js.Dynamic.global.global.Promise
 
     // define the schema
@@ -63,7 +64,7 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
 
           // update the comment
           result <- {
-            saved.name = "John Travola"
+            saved.name = "John Travolta"
             saved.age = 63
             saved.update().toFuture
           }

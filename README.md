@@ -44,6 +44,9 @@ import io.scalajs.npm.mongoose._
 import scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalajs.js
 
+// set the promise type
+Mongoose.Promise = js.Dynamic.global.global.Promise
+
 // define the schema
 val commentSchema = {
     import Mongoose.Schema.Types._
@@ -84,7 +87,7 @@ for {
     
     // update the comment
     result <- {
-        saved.name = "John Travola"
+        saved.name = "John Travolta"
         saved.age = 63
         saved.update().toFuture
     }
