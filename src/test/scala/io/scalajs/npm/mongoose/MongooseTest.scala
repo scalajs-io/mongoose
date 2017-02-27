@@ -38,6 +38,7 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
 
     it("should support CRUD operations") {
 
+      // create and populate an instance of the model
       val newContact = Contacts()
       newContact.name = "John Doe"
       newContact.age = 21
@@ -61,7 +62,8 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
             _ = info(s"saved contact: ${JSON.stringify(saved)}")
 
             // retrieve the contact by ID
-            contactById <- Contacts.findById(saved._id.orNull).exec().toFuture
+            contactId = saved._id.orNull
+            contactById <- Contacts.findById(contactId).exec().toFuture
             _ = info(s"contact-by-Id: ${JSON.stringify(contactById)}")
 
             // update the contact
@@ -69,12 +71,12 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
             _ = info(s"updated contact: ${JSON.stringify(saved)}")
             _ = Assert.ok(updateResult.nModified == 1 && updateResult.isOk, JSON.stringify(updateResult))
 
-            // retrieve using where
-            contactByWhere <- Contacts.findOne(doc()).where("age").gt(20).exec().toFuture
-            _ = info(s"contact-by-where: ${JSON.stringify(contactByWhere)}")
+            // retrieve a contact via where clause
+            oneContactWhere <- Contacts.findOne(doc()).where("age").gt(60).exec().toFuture
+            _ = info(s"contact-by-where: ${JSON.stringify(oneContactWhere)}")
 
             // delete the contact
-            deleted <- contactByWhere.remove().toFuture
+            deleted <- oneContactWhere.remove().toFuture
             _ = info(s"deleted contact: ${JSON.stringify(deleted)}")
           } yield deleted
 

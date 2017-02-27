@@ -44,70 +44,64 @@ import io.scalajs.npm.mongoose._
 import scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scalajs.js
 
-// set the promise type
-Mongoose.Promise = js.Dynamic.global.global.Promise
-
-// define the schema
-val commentSchema = {
-    import Mongoose.Schema.Types._
-    Schema[CommentLike](
-        "name" -> SchemaField(`type` = String, default = "John Doe"),
-        "age" -> SchemaField(`type` = Number, min = 18, c = true),
-        "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
-        "date" -> SchemaField(`type` = Date, default = js.Date.now),
-        "buff" -> Buffer
-    )
-}
-
-// register the model
-val Comments = Mongoose.model("Comment", commentSchema)
-
-// create an instance of the model
-val comment = Comments()
-comment.name = "John Doe"
-comment.age = 21
-comment.bio = "Lover of life"
-comment.date = js.Date.now()
-
-for {
-    // connect to the database
-    _ <- Mongoose.connectAsync("mongodb://localhost:27017/test").future
-    
-    // make sure there are no pre-existing comments
-    deletes <- Comments.remove(doc()).toFuture
-    _ = println(s"deletes: ${JSON.stringify(deletes)}")
-    
-    // save the comment
-    saved <- comment.save().toFuture
-    _ = println(s"saved comment: ${JSON.stringify(saved)}")
-    
-    // retrieve the comment(s)
-    comments <- Comments.find(doc()).exec().toFuture
-    _ = println(s"comments: ${JSON.stringify(comments)}")
-    
-    // update the comment
-    result <- {
-        saved.name = "John Travolta"
-        saved.age = 63
-        saved.update().toFuture
-    }
-    _ = println(s"updated comment: ${JSON.stringify(saved)}")
-    _ = Assert.ok(result.nModified == 1 && result.isOk, JSON.stringify(result))
-    
-    // delete the comment
-    deleted <- saved.remove().toFuture
-    _ = println(s"deleted comment: ${JSON.stringify(deleted)}")
-} {
-  println("Done.")
-}
-
+// define the type-safe schema trait
 @js.native
-trait CommentLike extends js.Object {
+  trait ContactLike extends js.Object {
     var name: String = js.native
     var age: js.UndefOr[Int] = js.native
     var bio: js.UndefOr[String] = js.native
     var date: js.UndefOr[Double] = js.native
     var buff: js.UndefOr[buffer.Buffer] = js.native
+}
+
+// define the schema
+val contactSchema = {
+    import Mongoose.Schema.Types._
+    Schema[ContactLike](
+        "name" -> SchemaField(`type` = String, default = "John Doe"),
+        "age" -> SchemaField(`type` = Number, min = 18, c = true),
+        "bio" -> SchemaField(`type` = String, `match` = js.RegExp("[a-z]")),
+        "date" -> SchemaField(`type` = Date, default = js.Date.now),
+        "buff" -> Buffer)
+}
+
+// register the model
+val Contacts = Mongoose.model("Contact", contactSchema)
+
+// create and populate an instance of the model
+val newContact = Contacts()
+newContact.name = "John Doe"
+newContact.age = 21
+newContact.bio = "Lover of life"
+newContact.date = js.Date.now()
+
+for {
+    // connect to the database
+    _ <- Mongoose.connectAsync("mongodb://localhost:27017/test").future
+    
+    // save the contact
+    saved <- newContact.save().toFuture
+    _ = println(s"saved contact: ${JSON.stringify(saved)}")
+    
+    // retrieve the contact by ID
+    contactId = saved._id.orNull
+    contactById <- Contacts.findById(contactId).exec().toFuture
+    _ = println(s"contact-by-Id: ${JSON.stringify(contactById)}")
+    
+    // update the contact
+    updateResult <- saved.increment().update(doc("name" -> "John Travolta", "age" -> 63)).toFuture
+    _ = println(s"updated contact: ${JSON.stringify(saved)}")
+    _ = Assert.ok(updateResult.nModified == 1 && updateResult.isOk, JSON.stringify(updateResult))
+    
+    // retrieve a contact via where clause
+    oneContactWhere <- Contacts.findOne(doc()).where("age").gt(60).exec().toFuture
+    _ = println(s"one-contact-where: ${JSON.stringify(oneContactWhere)}")
+    
+    // delete the contact
+    deleted <- oneContactWhere.remove().toFuture
+    _ = println(s"deleted contact: ${JSON.stringify(deleted)}")
+} {
+    println("Done.")
 }
 ```
 

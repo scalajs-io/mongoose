@@ -364,6 +364,52 @@ class MongooseModel[T](val doc: js.Any,
                        callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
 
   /**
+    * Shortcut for validating an array of documents and inserting them into
+    * MongoDB if they're all valid. This function is faster than .create()
+    * because it only sends one operation to the server, rather than one for each document.
+    * @param docs    the documents to insert
+    * @param options the optional options
+    * @return a promise of the inserted documents
+    */
+  def insertMany(docs: js.Array[T], options: RawOptions = js.native): js.Promise[js.Array[Model[T]]] = js.native
+
+  /**
+    * Shortcut for validating an array of documents and inserting them into
+    * MongoDB if they're all valid. This function is faster than .create()
+    * because it only sends one operation to the server, rather than one for each document.
+    * @param docs     the documents to insert
+    * @param options  the optional options
+    * @param callback the option callback
+    */
+  def insertMany(docs: js.Array[T],
+                 options: RawOptions,
+                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+
+  /**
+    * Shortcut for validating an array of documents and inserting them into
+    * MongoDB if they're all valid. This function is faster than .create()
+    * because it only sends one operation to the server, rather than one for each document.
+    * @param docs     the documents to insert
+    * @param callback the option callback
+    */
+  def insertMany(docs: js.Array[T],
+                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+
+  /**
+    * Executes a mapReduce command.
+    * @param obj an object specifying map-reduce options
+    * @return the promise of the results
+    */
+  def mapReduce[A](obj: js.Any): js.Promise[A] = js.native
+
+  /**
+    * Executes a mapReduce command.
+    * @param obj      an object specifying map-reduce options
+    * @param callback the  optional callback
+    */
+  def mapReduce[A](obj: js.Any, callback: js.Function2[MongooseError, A, T]): Unit = js.native
+
+  /**
     * Returns another Model instance.
     * @param name the model name
     * @tparam A the model type
@@ -377,15 +423,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param options A hash of key/val (path, options) used for population.
     * @return the <code>doc(s)</code>.
     */
-  def populate(doc: T, options: PopulateOptions | RawOptions = js.native): js.Promise[Model[T]] = js.native
-
-  /**
-    * Populates document references.
-    * @param docs    an array of documents to populate.
-    * @param options A hash of key/val (path, options) used for population.
-    * @return the <code>doc(s)</code>.
-    */
-  def populate(docs: js.Array[T], options: PopulateOptions | RawOptions = js.native): js.Promise[js.Array[T]] = js.native
+  def populate(doc: T, options: js.Dictionary[js.Any]): js.Promise[Model[T]] = js.native
 
   /**
     * Populates document references.
@@ -393,16 +431,27 @@ class MongooseModel[T](val doc: js.Any,
     * @param options  A hash of key/val (path, options) used for population.
     * @param callback Optional callback, executed upon completion. Receives <code>err</code> and the <code>doc(s)</code>.
     */
-  def populate[A](docs: A,
-                  options: PopulateOptions | RawOptions,
-                  callback: js.Function2[MongooseError, A, Any]): Unit = js.native
+  def populate(docs: T,
+               options: js.Dictionary[js.Any],
+               callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+
+  /**
+    * Populates document references.
+    * @param docs    an array of documents to populate.
+    * @param options A hash of key/val (path, options) used for population.
+    * @return the <code>doc(s)</code>.
+    */
+  def populate(docs: js.Array[T], options: js.Dictionary[js.Any]): js.Promise[js.Array[Model[T]]] = js.native
 
   /**
     * Populates document references.
     * @param docs     Either a single document or array of documents to populate.
+    * @param options  A hash of key/val (path, options) used for population.
     * @param callback Optional callback, executed upon completion. Receives <code>err</code> and the <code>doc(s)</code>.
     */
-  def populate[A](docs: js.Any, callback: js.Function2[MongooseError, A, Any]): Unit = js.native
+  def populate(docs: js.Array[T],
+               options: js.Dictionary[js.Any],
+               callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
 
   /**
     * Removes documents from the collection.
@@ -424,7 +473,9 @@ class MongooseModel[T](val doc: js.Any,
     * @param options the optional options
     * @return the promise of the updated document
     */
-  def update(conditions: js.Any, doc: js.Any, options: RawOptions = js.native): js.Promise[js.Array[Model[T]]] = js.native
+  def update(conditions: js.Any,
+             doc: js.Any,
+             options: RawOptions = js.native): js.Promise[js.Array[Model[T]]] = js.native
 
   /**
     * Updates documents in the database without returning them.
@@ -517,6 +568,14 @@ class MongooseModel[T](val doc: js.Any,
   def updateOne(conditions: js.Any,
                 doc: js.Any,
                 callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+
+  /**
+    * Creates a Query, applies the passed conditions, and returns the Query.
+    * @param path  the given path/field
+    * @param value the optional value
+    * @return the [[QueryOperator]]
+    */
+  def where(path: String, value: js.Any = js.native): QueryOperator[js.Array[T]] = js.native
 
 }
 

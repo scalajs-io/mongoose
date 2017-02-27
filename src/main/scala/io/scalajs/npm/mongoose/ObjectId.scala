@@ -9,4 +9,4 @@ import scala.scalajs.js.annotation.JSImport
   */
 @js.native
 @JSImport("mongoose", "Schema.ObjectId")
-class ObjectId extends js.Object
+class ObjectId() extends js.Object
