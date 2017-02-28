@@ -68,10 +68,18 @@ class MongooseModel[T](val doc: js.Any,
   /**
     * Performs aggregations on the models collection.
     * @param pipeline aggregation pipeline operator(s) or operator array
+    * @return the [[Aggregate]]
+    * @example aggregate([...], [callback])
+    */
+  def aggregate[A](pipeline: js.Any): Aggregate[A] = js.native
+
+  /**
+    * Performs aggregations on the models collection.
+    * @param pipeline aggregation pipeline operator(s) or operator array
     * @param callback the callback
     * @example aggregate([...], [callback])
     */
-  def aggregate[A](pipeline: js.Any, callback: js.Function2[MongooseError, A, Any]): Unit = js.native
+  def aggregate[A](pipeline: js.Any, callback: MongooseCallback[A]): Unit = js.native
 
   /**
     * Counts number of matching documents in a database collection.
@@ -119,7 +127,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param docs     a document or array of documents
     * @param callback the  callback
     */
-  def create(docs: js.Array[T], callback: js.Function2[MongooseError, js.Array[T], Any]): Unit = js.native
+  def create(docs: js.Array[T], callback: MongooseCallback[js.Array[T]]): Unit = js.native
 
   /**
     * Adds a discriminator type.
@@ -142,14 +150,14 @@ class MongooseModel[T](val doc: js.Any,
     * @param conditions the optional condition
     * @param callback   the callback
     */
-  def distinct(field: String, conditions: js.Any, callback: js.Function2[MongooseError, js.Array[T], Any]): Unit = js.native
+  def distinct(field: String, conditions: js.Any, callback: MongooseCallback[js.Array[T]]): Unit = js.native
 
   /**
     * Creates a Query for a distinct operation.
     * @param field    the field
     * @param callback the callback
     */
-  def distinct(field: String, callback: js.Function2[MongooseError, js.Array[T], Any]): Unit = js.native
+  def distinct(field: String, callback: MongooseCallback[js.Array[T]]): Unit = js.native
 
   /**
     * Sends ensureIndex commands to mongo for each index declared in the schema.
@@ -177,7 +185,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param conditions the given conditions/query
     * @param callback   the optional callback
     */
-  def find(conditions: js.Any, callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+  def find(conditions: js.Any, callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Finds a single document by its _id field. findById(id) is almost*
@@ -199,7 +207,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findById(id: ObjectId | String | Int,
                projection: RawOptions,
-               callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+               callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Finds a single document by its _id field. findById(id) is almost*
@@ -208,7 +216,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param id       the value of <code>_id</code> to query by
     * @param callback the optional callback
     */
-  def findById(id: ObjectId | String | Int, callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+  def findById(id: ObjectId | String | Int, callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issue a mongodb findAndModify remove command by a document's _id field. findByIdAndRemove(id, ...)
@@ -230,7 +238,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findByIdAndRemove(id: ObjectId | String | Int,
                         options: RawOptions,
-                        callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                        callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issue a mongodb findAndModify remove command by a document's _id field. findByIdAndRemove(id, ...)
@@ -240,7 +248,7 @@ class MongooseModel[T](val doc: js.Any,
     * @example findByIdAndRemove(id, [options], [callback])
     */
   def findByIdAndRemove(id: ObjectId | String | Int,
-                        callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                        callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issues a mongodb findAndModify update command by a document's _id field.
@@ -263,7 +271,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findByIdAndUpdate(id: ObjectId | String | Int,
                         update: js.Any,
-                        callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                        callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issues a mongodb findAndModify update command by a document's _id field.
@@ -276,7 +284,7 @@ class MongooseModel[T](val doc: js.Any,
   def findByIdAndUpdate(id: ObjectId | String | Int,
                         update: js.Any,
                         options: RawOptions,
-                        callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                        callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Finds one document.
@@ -292,7 +300,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param callback   the option callback
     */
   def findOne(conditions: js.Any,
-              callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+              callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Finds one document.
@@ -302,7 +310,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findOne(conditions: js.Any,
               projection: js.Any,
-              callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+              callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issue a mongodb findAndModify remove command.
@@ -320,7 +328,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findOneAndRemove(conditions: js.Any,
                        options: RawOptions,
-                       callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                       callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issue a mongodb findAndModify remove command.
@@ -328,7 +336,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param callback   the option callback
     */
   def findOneAndRemove(conditions: js.Any,
-                       callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                       callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issues a mongodb findAndModify update command.
@@ -351,7 +359,7 @@ class MongooseModel[T](val doc: js.Any,
   def findOneAndUpdate(conditions: js.Any,
                        update: js.Any,
                        options: RawOptions,
-                       callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                       callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Issues a mongodb findAndModify update command.
@@ -361,7 +369,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def findOneAndUpdate(conditions: js.Any,
                        update: js.Any,
-                       callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                       callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Shortcut for validating an array of documents and inserting them into
@@ -383,7 +391,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def insertMany(docs: js.Array[T],
                  options: RawOptions,
-                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+                 callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Shortcut for validating an array of documents and inserting them into
@@ -393,7 +401,7 @@ class MongooseModel[T](val doc: js.Any,
     * @param callback the option callback
     */
   def insertMany(docs: js.Array[T],
-                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+                 callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Executes a mapReduce command.
@@ -433,7 +441,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def populate(docs: T,
                options: js.Dictionary[js.Any],
-               callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+               callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Populates document references.
@@ -451,7 +459,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def populate(docs: js.Array[T],
                options: js.Dictionary[js.Any],
-               callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+               callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Removes documents from the collection.
@@ -487,7 +495,7 @@ class MongooseModel[T](val doc: js.Any,
   def update(conditions: js.Any,
              doc: js.Any,
              options: RawOptions,
-             callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+             callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Updates documents in the database without returning them.
@@ -497,7 +505,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def update(conditions: js.Any,
              doc: js.Any,
-             callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+             callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Same as update(), except MongoDB will update all documents that match
@@ -521,7 +529,7 @@ class MongooseModel[T](val doc: js.Any,
   def updateMany(conditions: js.Any,
                  doc: js.Any,
                  options: RawOptions,
-                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+                 callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Same as update(), except MongoDB will update all documents that match
@@ -533,7 +541,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def updateMany(conditions: js.Any,
                  doc: js.Any,
-                 callback: js.Function2[MongooseError, js.Array[Model[T]], Any]): Unit = js.native
+                 callback: MongooseModelArrayCallback[T]): Unit = js.native
 
   /**
     * Same as update(), except MongoDB will update only the first document that
@@ -556,7 +564,7 @@ class MongooseModel[T](val doc: js.Any,
   def updateOne(conditions: js.Any,
                 doc: js.Any,
                 options: RawOptions,
-                callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Same as update(), except MongoDB will update only the first document that
@@ -567,7 +575,7 @@ class MongooseModel[T](val doc: js.Any,
     */
   def updateOne(conditions: js.Any,
                 doc: js.Any,
-                callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+                callback: MongooseModelCallback[T]): Unit = js.native
 
   /**
     * Creates a Query, applies the passed conditions, and returns the Query.
@@ -602,7 +610,7 @@ object MongooseModel {
 
     def remove(): js.Promise[Model[T]] = js.native
 
-    def remove(callback: js.Function2[MongooseError, Model[T], Any]): Unit = js.native
+    def remove(callback: MongooseModelCallback[T]): Unit = js.native
 
     /**
       * Saves this document.

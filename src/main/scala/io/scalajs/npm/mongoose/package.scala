@@ -21,9 +21,36 @@ package object mongoose {
   //    Type Definitions
   ///////////////////////////////////////////////////////////////////
 
+  /**
+    * Model with CRUD definition
+    * @tparam A the underlying model type
+    */
+  type Model[A] = A with CRUD[A]
+
+  /**
+    * Mongoose Error
+    */
   type MongooseError = MongoError
 
-  type Model[A] = A with CRUD[A]
+  /**
+    * Generic Mongoose callback w/error
+    * @tparam A the parameter type
+    */
+  type MongooseCallback[A] = js.Function2[MongooseError, A, Any]
+
+  /**
+    * Mongoose callback w/error for enriched models
+    * @tparam A the underlying model type
+    */
+  type MongooseModelCallback[A] = js.Function2[MongooseError, Model[A], Any]
+
+  /**
+    * Mongoose callback w/error for enriched models
+    * @tparam A the underlying model type
+    */
+  type MongooseModelArrayCallback[A] = js.Function2[MongooseError, js.Array[Model[A]], Any]
+
+  /** Schema Field Types **/
 
   type ArrayFieldType = SchemaFieldType[js.Array[_]]
   type BooleanFieldType = SchemaFieldType[Boolean]

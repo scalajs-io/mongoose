@@ -154,27 +154,45 @@ trait Connectable extends js.Object {
 
   /**
     * Opens the default mongoose connection.
-    * @param url     the connecion URL
-    * @param options the connection options
-    * @return the connection
+    * @param uri     the connection URI
+    * @param options the optional options
+    * @return the mongoose connection
     */
-  def connect(url: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
+  def connect(uri: String, options: ConnectionOptions | RawOptions = js.native): Connection = js.native
 
   /**
     * Opens the default mongoose connection.
-    * @param url      the connecion URL
-    * @param options  the connection options
-    * @param callback the callback
+    * @param uri        the connection URI
+    * @param collection the collection
+    * @return the mongoose connection
     */
-  def connect(url: String,
+  def connect(uri: String, collection: String): Connection = js.native
+
+  /**
+    * Opens the default mongoose connection.
+    * @param uri      the connection URI
+    * @param options  the optional options
+    * @param callback the optional callback
+    */
+  def connect(uri: String,
               options: ConnectionOptions | RawOptions,
               callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
 
   /**
     * Opens the default mongoose connection.
-    * @param url      the connecion URL
-    * @param callback the callback
+    * @param uri        the connection URI
+    * @param collection the collection
+    * @param callback   the optional callback
     */
-  def connect(url: String, callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
+  def connect(uri: String,
+              collection: String,
+              callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
+
+  /**
+    * Opens the default mongoose connection.
+    * @param uri      the connection URI
+    * @param callback the optional callback
+    */
+  def connect(uri: String, callback: js.Function2[MongooseError, Connection, Any]): Unit = js.native
 
 }
