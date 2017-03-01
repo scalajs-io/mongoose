@@ -1,6 +1,6 @@
 {
-  "name": "mongoose-scalajs",
-  "version": "4.8.1",
+  "name": "mongoose-sjs",
+  "version": "4.8.1-2",
   "private": true,
   "dependencies": {
     "bluebird": "^3.4.7",
