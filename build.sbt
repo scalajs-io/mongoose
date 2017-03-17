@@ -6,7 +6,7 @@ import sbt._
 import scala.language.postfixOps
 
 val apiVersion = "4.8.1-2"
-val scalaJsIOVersion = "0.3.0.6"
+val scalaJsIOVersion = "0.3.0.7"
 val scalaJsVersion = "2.12.1"
 
 homepage := Some(url("https://github.com/scalajs.io/mongoose"))
@@ -27,8 +27,8 @@ lazy val root = (project in file(".")).
 	    "org.scala-lang" % "scala-reflect" % scalaJsVersion,
 	    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 	    "io.scalajs" %%% "nodejs" % scalaJsIOVersion,
-      "io.scalajs.npm" %%% "mongodb" % "2.2.22-2",
-      "io.scalajs.npm" %%% "mpromise" % "0.5.5"
+      "io.scalajs.npm" %%% "mongodb" % "2.2.22-6",
+      "io.scalajs.npm" %%% "mpromise" % "0.5.5-1"
   ))
 
 /////////////////////////////////////////////////////////////////////////////////
