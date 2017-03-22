@@ -109,7 +109,7 @@ for {
 To add the `Mongoose` binding to your project, add the following to your build.sbt:  
 
 ```sbt
-libraryDependencies += "io.scalajs.npm" %%% "mongoose" % "4.8.1-2"
+libraryDependencies += "io.scalajs.npm" %%% "mongoose" % "4.8.1-3"
 ```
 
 Optionally, you may add the Sonatype Repository resolver:
