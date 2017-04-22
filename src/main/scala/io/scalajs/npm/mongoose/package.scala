@@ -6,9 +6,9 @@ import io.scalajs.npm.mongodb.{ConnectionOptions, MongoError}
 import io.scalajs.npm.mongoose.MongooseModel.CRUD
 import io.scalajs.util.PromiseHelper._
 
-import scala.concurrent.Promise
+import scala.concurrent.{Future, Promise}
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSName
+import scala.scalajs.js.annotation.{JSGlobal, JSName}
 import scala.scalajs.js.|
 
 /**
@@ -66,7 +66,7 @@ package object mongoose {
   ///////////////////////////////////////////////////////////////////
 
   @js.native
-  @JSName("exports")
+  @JSGlobal("exports")
   object exports extends Exports
 
   ///////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ package object mongoose {
   implicit class MongooseEnrichment(val connectable: Connectable) extends AnyVal {
 
     @inline
-    def connectAsync(url: String, options: ConnectionOptions | RawOptions = null): Promise[Connection] = {
+    def connectFuture(url: String, options: ConnectionOptions | RawOptions = null): Future[Connection] = {
       promiseWithError1[MongooseError, Connection](connectable.connect(url, options, _))
     }
 

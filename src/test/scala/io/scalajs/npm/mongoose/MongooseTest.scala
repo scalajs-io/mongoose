@@ -47,7 +47,7 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
       // connect to MongoDB, and perform CRUD on the employee
       withMongoURL { url =>
         val conn = Mongoose.connect(url, "contacts")
-        Mongoose.connectAsync(url).future foreach { conn =>
+        Mongoose.connectFuture(url) foreach { conn =>
           val outcome = for {
           // save the employee
             saved <- newEmployee.save().toFuture
@@ -118,7 +118,7 @@ class MongooseTest extends FunSpec with MongoDBTestSupport {
       // connect to MongoDB, and perform CRUD on the contact
       withMongoURL { url =>
         info(s"Connecting to '$url'...")
-        Mongoose.connectAsync(url).future foreach { conn =>
+        Mongoose.connectFuture(url) foreach { conn =>
           val outcome = for {
           // save the contact
             saved <- newContact.save().toFuture
