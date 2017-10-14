@@ -5,7 +5,7 @@ import io.scalajs.npm.mongodb.UpdateWriteResult
 import io.scalajs.util.ScalaJsHelper._
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.ScalaJSDefined
+
 import scala.scalajs.js.|
 
 /**
@@ -674,7 +674,7 @@ object MongooseModel {
   * @param model   optional name of the model to use for population
   * @param options optional query options like sort, limit, etc
   */
-@ScalaJSDefined
+
 class PopulateOptions(val path: js.UndefOr[String] = js.undefined,
                       val select: js.UndefOr[String | js.Array[String]] = js.undefined,
                       val `match`: js.UndefOr[js.Any] = js.undefined,

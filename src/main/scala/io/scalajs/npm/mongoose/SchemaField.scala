@@ -1,7 +1,7 @@
 package io.scalajs.npm.mongoose
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.ScalaJSDefined
+
 
 /**
   * Schema Field Definition
@@ -15,7 +15,7 @@ import scala.scalajs.js.annotation.ScalaJSDefined
   * @param max       an optional maximum value
   * @param index     an optional index indicator
   */
-@ScalaJSDefined
+
 class SchemaField[A](val `type`: SchemaFieldType[A],
                      val default: js.UndefOr[A] = js.undefined,
                      val c: js.UndefOr[Boolean] = js.undefined,
